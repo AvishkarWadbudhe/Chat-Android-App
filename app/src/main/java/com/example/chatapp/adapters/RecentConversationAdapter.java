@@ -61,13 +61,7 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
 
-            int unreadCount = chatMessage.unreadCount; // Get the unread message count from ChatMessage object
-            if (unreadCount > 0) {
-                binding.textMessageCounter.setText(String.valueOf(unreadCount));
-                binding.textMessageCounter.setVisibility(View.VISIBLE);
-            } else {
-                binding.textMessageCounter.setVisibility(View.GONE);
-            }
+
 
             binding.getRoot().setOnClickListener(v -> {
                 User user = new User();
