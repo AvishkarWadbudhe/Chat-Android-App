@@ -1,16 +1,14 @@
 package com.example.chatapp.firebase;
 
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -30,6 +28,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -45,12 +44,11 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(this, ChatAcivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(Constants.KEY_USER, user);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
-        builder.setSmallIcon(R.mipmap.ic_launcher_foreground);
+        builder.setSmallIcon(R.mipmap.ic_logo_foreground);
         builder.setContentTitle(user.name);
-
         builder.setContentText(remoteMessage.getData().get(Constants.KEY_MESSAGE));
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(
                 remoteMessage.getData().get(Constants.KEY_MESSAGE)
@@ -58,7 +56,6 @@ public class MessagingService extends FirebaseMessagingService {
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(true);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence channelName = "Chat message";
@@ -68,20 +65,10 @@ public class MessagingService extends FirebaseMessagingService {
             channel.setDescription(channelDescription);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-
         }
-        NotificationManagerCompat notificatiionManagerCompact = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        notificatiionManagerCompact.notify(notificationId, builder.build());
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(notificationId, builder.build());
     }
+
 }

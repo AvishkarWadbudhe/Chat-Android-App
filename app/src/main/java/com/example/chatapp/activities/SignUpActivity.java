@@ -66,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         HashMap<String,Object> user= new HashMap<>();
         user.put(Constants.KEY_NAME,binding.inputName.getText().toString());
-        user.put(Constants.KEY_EMAIL,binding.inputEmail.getText().toString());
+        user.put(Constants.KEY_EMAIL,binding.inputUserName.getText().toString());
         user.put(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString());
         user.put(Constants.KEY_IMAGE,encodedImage);
         database.collection(Constants.KEY_COLLECTION_USER)
@@ -135,12 +135,8 @@ public class SignUpActivity extends AppCompatActivity {
             showTost("Enter Name");
             return false;
         }
-        else if(binding.inputEmail.getText().toString().trim().isEmpty()) {
-            showTost("Enter Email");
-            return false;
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()){
-            showTost("Enter Valid Email");
+        else if(binding.inputUserName.getText().toString().trim().isEmpty()) {
+            showTost("Enter user Name");
             return false;
         }
         else if(binding.inputPassword.getText().toString().trim().isEmpty()){
@@ -158,11 +154,15 @@ public class SignUpActivity extends AppCompatActivity {
     }
     private void loading(Boolean isLoading)
     {
-        if(isLoading){
-            binding.buttonSignUp.setVisibility(View.INVISIBLE);
-            binding.progressBar.setVisibility(View.INVISIBLE);
-            binding.buttonSignUp.setVisibility(View.VISIBLE);
-        }
+            if(isLoading)
+            {
+                binding.buttonSignUp.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.VISIBLE);
+            }
+            else {
+                binding.progressBar.setVisibility(View.INVISIBLE);
+                binding.buttonSignUp.setVisibility(View.VISIBLE);
+            }
     }
 
 }

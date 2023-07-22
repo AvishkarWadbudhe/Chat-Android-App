@@ -50,7 +50,7 @@ private PreferenceManager preferenceManager;
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         database.collection(Constants.KEY_COLLECTION_USER)
-                .whereEqualTo(Constants.KEY_EMAIL,binding.inputEmail.getText().toString())
+                .whereEqualTo(Constants.KEY_EMAIL,binding.inputUserName.getText().toString())
                 .whereEqualTo(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString())
                 .get()
                 .addOnCompleteListener(task -> {
@@ -90,14 +90,9 @@ private void loading(Boolean isLoading)
     }
     private Boolean isValidSignInDetails()
     {
-        if(binding.inputEmail.getText().toString().trim().isEmpty())
+        if(binding.inputUserName.getText().toString().trim().isEmpty())
         {
             showToast("Enter Email");
-            return false;
-        }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches())
-        {
-            showToast("Enter Valid Email");
             return false;
         }
         else if(binding.inputPassword.getText().toString().trim().isEmpty())

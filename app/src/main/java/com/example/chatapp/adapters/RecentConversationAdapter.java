@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,14 +17,14 @@ import com.example.chatapp.models.User;
 
 import java.util.List;
 
-public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConversationAdapter.ConversionViewHolder>{
+public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConversationAdapter.ConversionViewHolder> {
 
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
 
-    public RecentConversationAdapter(List<ChatMessage> chatMessages,ConversionListener conversionListener) {
+    public RecentConversationAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
-        this.conversionListener=conversionListener;
+        this.conversionListener = conversionListener;
     }
 
     @NonNull
@@ -32,14 +33,14 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
         return new ConversionViewHolder(
                 ItemContainerRecentConversionBinding.inflate(
                         LayoutInflater.from(parent.getContext()),
-                        parent,false
+                        parent, false
                 )
         );
     }
 
     @Override
     public void onBindViewHolder(@NonNull ConversionViewHolder holder, int position) {
-    holder.setData(chatMessages.get(position));
+        holder.setData(chatMessages.get(position));
     }
 
     @Override
@@ -47,29 +48,39 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
         return chatMessages.size();
     }
 
-    class ConversionViewHolder extends RecyclerView.ViewHolder{
-        ItemContainerRecentConversionBinding binding;
-        ConversionViewHolder(ItemContainerRecentConversionBinding itemContainerRecentConversionBinding){
+    class ConversionViewHolder extends RecyclerView.ViewHolder {
+        private final ItemContainerRecentConversionBinding binding;
+
+        ConversionViewHolder(ItemContainerRecentConversionBinding itemContainerRecentConversionBinding) {
             super(itemContainerRecentConversionBinding.getRoot());
-            binding=itemContainerRecentConversionBinding;
+            binding = itemContainerRecentConversionBinding;
         }
-        void setData(ChatMessage chatMessage){
-            binding.imageProfile.setImageBitmap(getconversionImage(chatMessage.conversionImage));
+
+        void setData(ChatMessage chatMessage) {
+            binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
+
+            int unreadCount = chatMessage.unreadCount; // Get the unread message count from ChatMessage object
+            if (unreadCount > 0) {
+                binding.textMessageCounter.setText(String.valueOf(unreadCount));
+                binding.textMessageCounter.setVisibility(View.VISIBLE);
+            } else {
+                binding.textMessageCounter.setVisibility(View.GONE);
+            }
+
             binding.getRoot().setOnClickListener(v -> {
                 User user = new User();
                 user.id = chatMessage.conversionId;
-                user.name=chatMessage.conversionName;
-                user.image= chatMessage.conversionImage;
+                user.name = chatMessage.conversionName;
+                user.image = chatMessage.conversionImage;
                 conversionListener.onCOnversionClicked(user);
             });
         }
     }
 
-
-    private Bitmap getconversionImage(String encodedImage){
-        byte[] bytes = Base64.decode(encodedImage,Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+    private Bitmap getConversionImage(String encodedImage) {
+        byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }
