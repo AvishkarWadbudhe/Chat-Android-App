@@ -3,6 +3,6 @@ package com.example.chatapp.listeners;
 import com.example.chatapp.models.User;
 
 public interface ConversionListener {
-    void onCOnversionClicked(User user);
+    void onConversionClicked(User user);
 
 }

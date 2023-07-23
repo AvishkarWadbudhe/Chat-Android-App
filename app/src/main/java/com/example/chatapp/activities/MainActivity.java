@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivities implements ConversionListener {
 
     private void init(){
         conversation = new ArrayList<>();
-        conversationAdapter = new RecentConversationAdapter(conversation,this);
+        conversationAdapter = new RecentConversationAdapter(this,conversation,this);
         binding.conversationsRecycleView.setAdapter(conversationAdapter);
         database = FirebaseFirestore.getInstance();
     }
@@ -190,7 +190,7 @@ private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
     }
 
     @Override
-    public void onCOnversionClicked(User user) {
+    public void onConversionClicked(User user) {
         Intent intent = new Intent(getApplicationContext(),ChatAcivity.class);
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);

@@ -1,5 +1,6 @@
 package com.example.chatapp.adapters;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -14,6 +15,8 @@ import com.example.chatapp.databinding.ItemContainerRecentConversionBinding;
 import com.example.chatapp.listeners.ConversionListener;
 import com.example.chatapp.models.ChatMessage;
 import com.example.chatapp.models.User;
+import com.example.chatapp.utilities.Constants;
+import com.example.chatapp.utilities.PreferenceManager;
 
 import java.util.List;
 
@@ -21,10 +24,12 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
 
     private final List<ChatMessage> chatMessages;
     private final ConversionListener conversionListener;
+    private PreferenceManager preferenceManager;
 
-    public RecentConversationAdapter(List<ChatMessage> chatMessages, ConversionListener conversionListener) {
+    public RecentConversationAdapter(Context context, List<ChatMessage> chatMessages, ConversionListener conversionListener) {
         this.chatMessages = chatMessages;
         this.conversionListener = conversionListener;
+        this.preferenceManager = new PreferenceManager(context);
     }
 
     @NonNull
@@ -40,7 +45,23 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
 
     @Override
     public void onBindViewHolder(@NonNull ConversionViewHolder holder, int position) {
-        holder.setData(chatMessages.get(position));
+        ChatMessage chatMessage = chatMessages.get(position);
+        holder.setData(chatMessage);
+
+        // Calculate unread message count
+        int unreadMessageCount = 0;
+        // Check if the conversation is unread and not sent by the current user
+        if (chatMessage.unreadCount > 0 && !chatMessage.senderId.equals(preferenceManager.getString(Constants.KEY_USER_ID))) {
+            unreadMessageCount = chatMessage.unreadCount;
+        }
+
+        // Display unread message count on UI
+        if (unreadMessageCount > 0) {
+            holder.binding.textUnreadMessageCount.setVisibility(View.VISIBLE);
+            holder.binding.textUnreadMessageCount.setText(String.valueOf(unreadMessageCount));
+        } else {
+            holder.binding.textUnreadMessageCount.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -61,16 +82,24 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
             binding.textName.setText(chatMessage.conversionName);
             binding.textRecentMessage.setText(chatMessage.message);
 
-
+            // Display unread message count on UI
+            if (chatMessage.unreadCount > 0) {
+                binding.textUnreadMessageCount.setVisibility(View.VISIBLE);
+                binding.textUnreadMessageCount.setText(String.valueOf(chatMessage.unreadCount));
+            } else {
+                binding.textUnreadMessageCount.setVisibility(View.GONE);
+            }
 
             binding.getRoot().setOnClickListener(v -> {
                 User user = new User();
                 user.id = chatMessage.conversionId;
                 user.name = chatMessage.conversionName;
                 user.image = chatMessage.conversionImage;
-                conversionListener.onCOnversionClicked(user);
+                conversionListener.onConversionClicked(user);
             });
         }
+
+
     }
 
     private Bitmap getConversionImage(String encodedImage) {
