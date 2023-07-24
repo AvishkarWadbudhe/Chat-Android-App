@@ -21,7 +21,7 @@ To run the app locally, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/RealTimeChatApp.git
+   git clone https://github.com/AvishkarWadbudhe/Chat-App.git
    ```
 
 2. Open the project in Android Studio.
