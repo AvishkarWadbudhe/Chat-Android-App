@@ -63,6 +63,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile">
 
+        <TextView
+            android:id="@+id/textEmptyConversation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Click on the + button to start new chat"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/conversationsRecycleView"
             android:layout_width="match_parent"

@@ -146,9 +146,17 @@ private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
 
             Collections.sort(conversation,(obj1,obj2) ->obj2.dateObject.compareTo(obj1.dateObject));
             conversationAdapter.notifyDataSetChanged();
-            binding.conversationsRecycleView.smoothScrollToPosition(0);
-            binding.conversationsRecycleView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
+            if (conversation.isEmpty()) {
+                binding.textEmptyConversation.setVisibility(View.VISIBLE);
+                binding.conversationsRecycleView.setVisibility(View.GONE);
+                binding.progressBar.setVisibility(View.GONE);
+            } else {
+                binding.textEmptyConversation.setVisibility(View.GONE);
+                binding.conversationsRecycleView.smoothScrollToPosition(0);
+                binding.conversationsRecycleView.setVisibility(View.VISIBLE);
+
+            }
+
         }
 
 };
