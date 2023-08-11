@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -56,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void showTost(String message)
+    private void showToast(String message)
     {
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
     }
@@ -83,7 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(exception ->{
                     loading(false);
-                    showTost(exception.getMessage());
+                    showToast(exception.getMessage());
 
                 });
 
@@ -128,23 +127,27 @@ public class SignUpActivity extends AppCompatActivity {
     private Boolean isValidSignUpDetails()
     {
         if(encodedImage==null){
-            showTost("Select Profile Image");
+            showToast("Select Profile Image");
             return false;
         }
         else if(binding.inputName.getText().toString().trim().isEmpty()){
-            showTost("Enter Name");
+            showToast("Enter Name");
             return false;
         }
         else if(binding.inputUserName.getText().toString().trim().isEmpty()) {
-            showTost("Enter user Name");
+            showToast("Enter user Name");
             return false;
         }
         else if(binding.inputPassword.getText().toString().trim().isEmpty()){
-            showTost("Enter Password");
+            showToast("Enter Password");
+            return false;
+        }
+        else if (binding.inputPassword.getText().toString().trim().length() <= 8) {
+            showToast("Password must be greater than 8 characters");
             return false;
         }
         else if(!binding.inputPassword.getText().toString().equals(binding.inputConfirmPassword.getText().toString())){
-            showTost("Password & Confirm Password Must Be Same");
+            showToast("Password & Confirm Password Must Be Same");
             return false;
         }
         else {

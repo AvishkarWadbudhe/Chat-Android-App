@@ -1,8 +1,8 @@
 package com.example.chatapp.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,8 +27,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.checkerframework.checker.units.qual.C;
-import org.jetbrains.annotations.NonNls;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +70,7 @@ public class ChatAcivity extends BaseActivities {
         chatMessages= new ArrayList<>();
         chatAdapter = new ChatAdapter(
                         chatMessages, preferenceManager.getString(Constants.KEY_USER_ID),
-                getBitmaoFromEncodedString(receiverUser.image)
+                getBitmapFromEncodedString(receiverUser.image)
         );
         binding.chatRecycleView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -94,7 +92,6 @@ public class ChatAcivity extends BaseActivities {
                 conversion.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
                 conversion.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 conversion.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
-                conversion.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
                 conversion.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
                 conversion.put(Constants.KEY_RECEIVER_NAME, receiverUser.name);
                 conversion.put(Constants.KEY_RECEIVER_IMAGE, receiverUser.image);
@@ -113,6 +110,7 @@ public class ChatAcivity extends BaseActivities {
                     data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
                     data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                     data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+                    data.put(Constants.KEY_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
                     data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
 
                     JSONObject body = new JSONObject();
@@ -158,7 +156,7 @@ public class ChatAcivity extends BaseActivities {
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    showToast("Notification sent succcessfull");
+                    showToast("Notification sent successful");
                 }else {
                     showToast("Error:"+response.code());
                 }
@@ -192,7 +190,7 @@ public class ChatAcivity extends BaseActivities {
                 if(receiverUser.image ==null)
                 {
                     receiverUser.image= value.getString(Constants.KEY_IMAGE);
-                    chatAdapter.setReceiverProfileImage(getBitmaoFromEncodedString(receiverUser.image));
+                    chatAdapter.setReceiverProfileImage(getBitmapFromEncodedString(receiverUser.image));
                     chatAdapter.notifyItemRangeChanged(0,chatMessages.size());
                 }
             }
@@ -219,6 +217,7 @@ public class ChatAcivity extends BaseActivities {
                 .addSnapshotListener(eventListener);
     }
 
+@SuppressLint("NotifyDataSetChanged")
 private final EventListener<QuerySnapshot>eventListener = ((value, error) -> {
     if(error!=null){
         return;
@@ -256,7 +255,7 @@ private final EventListener<QuerySnapshot>eventListener = ((value, error) -> {
     }
 });
 
-    private Bitmap getBitmaoFromEncodedString(String encodedImage){
+    private Bitmap getBitmapFromEncodedString(String encodedImage){
         if(encodedImage !=null){
             byte[] bytes= Base64.decode(encodedImage,Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes,0,bytes.length);
@@ -266,25 +265,16 @@ private final EventListener<QuerySnapshot>eventListener = ((value, error) -> {
         }
     }
 
-    private void loadReceiverDetails()
-    {
-        receiverUser =(User)getIntent().getSerializableExtra(Constants.KEY_USER);
+    private void loadReceiverDetails() {
+        receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textUserName.setText(receiverUser.name);
-
-        binding.imageProfile.setImageBitmap(getBitmaoFromEncodedString(receiverUser.image));
-
-
-
-
+        binding.imageProfile.setImageBitmap(getBitmapFromEncodedString(receiverUser.image));
     }
 
     private  void setListeners()
     {
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.imageProfile.setOnClickListener(v -> onBackPressed());
-
-
-
             binding.layoutSend.setOnClickListener(v -> sendMessage());
 
     }
