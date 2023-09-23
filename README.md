@@ -12,7 +12,6 @@ This Android Real-Time Chat app allows users to create an account using a unique
 
 ## Screenshots
 
-Insert screenshots of the app here.
 
 ## Installation
 
